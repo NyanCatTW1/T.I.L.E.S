@@ -11,10 +11,19 @@
 
   <body onload="startGame()">
     <h1>You have <span id="clickOwned">0</span>/<span id="clickCap">10</span> clicks and <span id="coinOwned">0</span> coins.</h1>
-    <button id="clickBtn">Gain <span id="clickGain">1</span> click</button>
-    <button id="sellBtn">Sell your clicks for <span id="sellAmt">0</span> coins.</button>
+    <button id="clickBtn">Gain <span id="clickGain">1</span> click</button><br />
+    <button id="sellBtn">Sell your clicks for <span id="sellAmt">0</span> coins.</button><br />
+    <button id="cursorUpgBtn">
+      Upgrade to <span id="cursorName">Copper</span> cursor for <span id="cursorCost">20</span> coins, it has a click gain of
+      <span id="cursorEffect">2</span>.</button
+    ><br />
+    <button id="bagUpgBtn">
+      Upgrade to <span id="bagName">Copper</span> bag for <span id="bagCost">40</span> coins, it has a capacity of
+      <span id="bagEffect">40</span> clicks.</button
+    ><br />
     <script src="js/break_eternity.min.js"></script>
     <script src="js/tools.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>

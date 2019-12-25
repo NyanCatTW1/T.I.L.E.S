@@ -2,15 +2,19 @@ var getDefaultPlayer = () => ({
   lastUpdate: new Date().getTime(),
   clickOwned: new Decimal(0),
   coinOwned: new Decimal(0),
-  bagLevel: 0,
-  cursorLevel: 0,
+  bagTier: 0,
+  cursorTier: 0,
   get clickCap() {
-    let bagCaps = [10, 40, 160, 640, 2560, 10240, 40960, 163840, 655360]
-    return new Decimal(bagCaps[this.bagLevel])
+    return new Decimal(bagEffects[this.bagTier])
   },
   get clickGain() {
-    let cursorGains = [1, 2, 4, 8, 16, 32, 64, 128, 256]
-    return new Decimal(cursorGains[this.cursorLevel])
+    return new Decimal(cursorEffects[this.cursorTier])
+  },
+  get bagCost() {
+    return new Decimal(bagCosts[player.bagTier + 1])
+  },
+  get cursorCost() {
+    return new Decimal(cursorCosts[player.cursorTier + 1])
   }
 })
 var player = getDefaultPlayer()
@@ -30,12 +34,26 @@ function coinOnSell() {
   return player.clickOwned
 }
 
+function upgradeItem(type) {
+  if (player.coinOwned.gte(player[`${type}Cost`])) {
+    player.coinOwned = player.coinOwned.sub(player[`${type}Cost`])
+    player[`${type}Tier`]++
+    return true
+  }
+  return false
+}
+
 function updateDisplay() {
   ue("clickOwned", player.clickOwned)
   ue("coinOwned", player.coinOwned)
   ue("clickCap", player.clickCap)
   ue("clickGain", player.clickGain)
   ue("sellAmt", coinOnSell())
+  ;["cursor", "bag"].forEach(function(item) {
+    ue(`${item}Name`, tierNames[player[`${item}Tier`] + 1])
+    ue(`${item}Cost`, player[`${item}Cost`])
+    ue(`${item}Effect`, window[`${item}Effects`][player[`${item}Tier`] + 1])
+  })
 }
 
 function gameLoop() {
@@ -52,6 +70,8 @@ function gameLoop() {
 function hookAllOnclick() {
   hookOnclick("clickBtn", click)
   hookOnclick("sellBtn", sellClicks)
+  hookOnclick("cursorUpgBtn", () => upgradeItem("cursor"))
+  hookOnclick("bagUpgBtn", () => upgradeItem("bag"))
 }
 
 function startGame() {
