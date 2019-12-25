@@ -2,6 +2,13 @@ var getDefaultPlayer = () => ({
   lastUpdate: new Date().getTime(),
   clickOwned: new Decimal(0),
   coinOwned: new Decimal(0),
+  get coinMult() {
+    return player.rebirth.plus(1)
+  },
+  rebirth: new Decimal(0),
+  get rebirthCost() {
+    return player.rebirth.plus(1).times(10000)
+  },
   bagTier: 0,
   cursorTier: 0,
   get clickCap() {
@@ -31,13 +38,30 @@ function sellClicks() {
 }
 
 function coinOnSell() {
-  return player.clickOwned
+  let ret = player.clickOwned
+  ret = ret.times(player.coinMult)
+  return ret
 }
 
 function upgradeItem(type) {
   if (player.coinOwned.gte(player[`${type}Cost`])) {
     player.coinOwned = player.coinOwned.sub(player[`${type}Cost`])
     player[`${type}Tier`]++
+    return true
+  }
+  return false
+}
+
+function reset(tier) {
+  let resetOnTier = [["clickOwned", "coinOwned", "bagTier", "cursorTier"]]
+  let toReset = [].concat.apply([], resetOnTier.slice(0, tier))
+  resetValues(toReset)
+}
+
+function rebirth() {
+  if (player.coinOwned.gte(player.rebirthCost)) {
+    reset(1)
+    player.rebirth = player.rebirth.plus(1)
     return true
   }
   return false
@@ -54,6 +78,8 @@ function updateDisplay() {
     ue(`${item}Cost`, player[`${item}Cost`])
     ue(`${item}Effect`, window[`${item}Effects`][player[`${item}Tier`] + 1])
   })
+  ue("afterCoinMult", player.coinMult.plus(1))
+  ue("rebirthCost", player.rebirthCost)
 }
 
 function gameLoop() {
@@ -72,6 +98,7 @@ function hookAllOnclick() {
   hookOnclick("sellBtn", sellClicks)
   hookOnclick("cursorUpgBtn", () => upgradeItem("cursor"))
   hookOnclick("bagUpgBtn", () => upgradeItem("bag"))
+  hookOnclick("rebirthBtn", rebirth)
 }
 
 function startGame() {
