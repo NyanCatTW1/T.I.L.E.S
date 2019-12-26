@@ -1,5 +1,31 @@
-var cursorEffects = [1, 2, 4, 8, 16, 32, 64, 128, 256, 0]
-var cursorCosts = [0, 20, 80, 320, 1280, 5120, 20480, 81920, 327680, 1 / 0]
-var bagEffects = [10, 40, 160, 640, 2560, 10240, 40960, 163840, 655360, 0]
-var bagCosts = [0, 40, 320, 2560, 20480, 163840, 1310720, 10485760, 83886080, 1 / 0]
-var tierNames = ["Normal", "Copper", "Silver", "Golden", "Diamond", "Platinum", "Obsidian", "Epic", "Holy", "Nonexistent"]
+var cursorEffects = []
+var cursorCosts = [new Decimal(0)]
+var bagEffects = []
+var bagCosts = [new Decimal(0)]
+for (i = 0; i < 12; i++) {
+  cursorEffects.push(Decimal.pow(2, i))
+  bagEffects.push(Decimal.pow(2, 2 * i).times(10))
+  if (i > 0) {
+    cursorCosts.push(Decimal.pow(2, 2 * (i - 1)).times(20))
+    bagCosts.push(Decimal.pow(2, 3 * (i - 1)).times(40))
+  }
+}
+cursorEffects.push(new Decimal(0))
+cursorCosts.push(new Decimal(1 / 0))
+bagEffects.push(new Decimal(0))
+bagCosts.push(new Decimal(0))
+var tierNames = [
+  "Normal",
+  "Copper",
+  "Silver",
+  "Golden",
+  "Diamond",
+  "Platinum",
+  "Obsidian",
+  "Epic",
+  "Holy",
+  "Legendary",
+  "Normal II",
+  "Copper II",
+  "Nonexistent"
+]
