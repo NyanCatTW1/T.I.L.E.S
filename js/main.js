@@ -74,6 +74,7 @@ function updateDisplay() {
   ue("clickGain", player.clickGain)
   ue("sellAmt", coinOnSell())
   ;["cursor", "bag"].forEach(function(item) {
+    de(`${item}UpgBtn`, player[`${item}Tier`] + 2 < window[`${item}Costs`].length)
     ue(`${item}Name`, tierNames[player[`${item}Tier`] + 1])
     ue(`${item}Cost`, player[`${item}Cost`])
     ue(`${item}Effect`, window[`${item}Effects`][player[`${item}Tier`] + 1])
