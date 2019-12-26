@@ -18,7 +18,7 @@ var getDefaultPlayer = () => ({
         break
       }
     } while (bulk.lt(100))
-    return bulk
+    return bulk.minus(1)
   },
   get bulkRebirthCost() {
     return player.singleRebirthCost.times(Decimal.pow(player.bulkRebirthAmount, 3))
@@ -82,19 +82,19 @@ function rebirth() {
 }
 
 function updateDisplay() {
-  ue("clickOwned", player.clickOwned)
-  ue("coinOwned", player.coinOwned)
-  ue("clickCap", player.clickCap)
-  ue("clickGain", player.clickGain)
+  ue("clickOwned", nf(player.clickOwned))
+  ue("coinOwned", nf(player.coinOwned))
+  ue("clickCap", nf(player.clickCap))
+  ue("clickGain", nf(player.clickGain))
   ue("sellAmt", coinOnSell())
   ;["cursor", "bag"].forEach(function(item) {
     de(`${item}UpgBtn`, player[`${item}Tier`] + 2 < window[`${item}Costs`].length)
     ue(`${item}Name`, tierNames[player[`${item}Tier`] + 1])
-    ue(`${item}Cost`, player[`${item}Cost`])
-    ue(`${item}Effect`, window[`${item}Effects`][player[`${item}Tier`] + 1])
+    ue(`${item}Cost`, nf(player[`${item}Cost`]))
+    ue(`${item}Effect`, nf(window[`${item}Effects`][player[`${item}Tier`] + 1]))
   })
-  ue("afterCoinMult", player.coinMult.plus(Decimal.max(1, player.bulkRebirthAmount)))
-  ue("rebirthCost", player.bulkRebirthAmount.gt(0) ? player.bulkRebirthCost : player.singleRebirthCost)
+  ue("afterCoinMult", nf(player.coinMult.plus(Decimal.max(1, player.bulkRebirthAmount))))
+  ue("rebirthCost", nf(player.bulkRebirthAmount.gt(0) ? player.bulkRebirthCost : player.singleRebirthCost))
 }
 
 function gameLoop() {
