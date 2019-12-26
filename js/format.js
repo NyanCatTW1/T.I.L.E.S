@@ -1,3 +1,4 @@
+// Origin from AD(IvarK.github.io), edited by Nyan Cat, "The regex fix" version
 const inflog = Math.log10(Number.MAX_VALUE)
 function formatValue(value, places, placesUnder1000) {
   if (value >= 1000) {
@@ -16,7 +17,7 @@ function formatValue(value, places, placesUnder1000) {
     if (power > 100000) return matissa + "e" + power.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
     return matissa + "e" + power
   } else {
-    return value.toFixed(placesUnder1000).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, "$1")
+    return value.toFixed(placesUnder1000).replace(/(?:(\.\d*?[1-9]+)|\.)0*$/, "$1")
   }
 }
 
@@ -25,7 +26,7 @@ function formatPercent(value) {
 }
 
 nf = function(money) {
-  return formatValue(money, 2, 0)
+  return formatValue(money, 2, 3)
 }
 
 function timeDisplay(time) {
