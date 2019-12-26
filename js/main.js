@@ -6,8 +6,22 @@ var getDefaultPlayer = () => ({
     return player.rebirth.plus(1)
   },
   rebirth: new Decimal(0),
-  get rebirthCost() {
+  get singleRebirthCost() {
     return player.rebirth.plus(1).times(10000)
+  },
+  get bulkRebirthAmount() {
+    let bulk = new Decimal(0)
+    do {
+      if (player.coinOwned.gte(player.singleRebirthCost.times(Decimal.pow(bulk, 3)))) {
+        bulk = bulk.plus(1)
+      } else {
+        break
+      }
+    } while (bulk.lt(100))
+    return bulk
+  },
+  get bulkRebirthCost() {
+    return player.singleRebirthCost.times(Decimal.pow(player.bulkRebirthAmount, 3))
   },
   bagTier: 0,
   cursorTier: 0,
@@ -59,9 +73,9 @@ function reset(tier) {
 }
 
 function rebirth() {
-  if (player.coinOwned.gte(player.rebirthCost)) {
+  if (player.bulkRebirthAmount.gt(0)) {
+    player.rebirth = player.rebirth.plus(player.bulkRebirthAmount)
     reset(1)
-    player.rebirth = player.rebirth.plus(1)
     return true
   }
   return false
@@ -79,8 +93,8 @@ function updateDisplay() {
     ue(`${item}Cost`, player[`${item}Cost`])
     ue(`${item}Effect`, window[`${item}Effects`][player[`${item}Tier`] + 1])
   })
-  ue("afterCoinMult", player.coinMult.plus(1))
-  ue("rebirthCost", player.rebirthCost)
+  ue("afterCoinMult", player.coinMult.plus(Decimal.max(1, player.bulkRebirthAmount)))
+  ue("rebirthCost", player.bulkRebirthAmount.gt(0) ? player.bulkRebirthCost : player.singleRebirthCost)
 }
 
 function gameLoop() {
